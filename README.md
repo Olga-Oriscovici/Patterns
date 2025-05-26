@@ -1,5 +1,5 @@
 # Patterns
-Что такое паттерны? 
+Что такое паттерны?
 Данная информация - это конспект по книги "Design patterns" , созданный в процессе изучения паттернов.
 
 Паттерн предоставляем определенное решение задачи в определенном контексте. 
@@ -27,7 +27,7 @@
 Порождающие паттерны: 
 Порождающие паттерны абстрагируют процесс инстанцирования. Паттерны порождающие классы используют наследования для того , чтобы изменять инстанцируемый класс, а паттерн порождающий объект делегирует инстанцирование другому объекту
 
-Абстрактная фабрика
+1.Абстрактная фабрика
 
 Название и классификация 
 Абстрактная фабрика - паттерн порождающий объект
@@ -61,5 +61,185 @@ AbstractProduct - объявляет интерфейс для типа объе
 -Сложно расширять систему  , так как при расширение системы необходимо расширять интерфейс абстрактной фабрики , а следовательно и подклассы
 
 Пример кода:
+// Абстрактные продукты
+public interface IProductA
+{
+    string GetName();
+}
+
+public interface IProductB
+{
+    string GetDescription();
+}
+
+// Конкретные продукты
+public class ProductA1 : IProductA
+{
+    public string GetName() => "Product A1";
+}
+
+public class ProductA2 : IProductA
+{
+    public string GetName() => "Product A2";
+}
+
+public class ProductB1 : IProductB
+{
+    public string GetDescription() => "Product B1";
+}
+
+public class ProductB2 : IProductB
+{
+    public string GetDescription() => "Product B2";
+}
+
+// Абстрактная фабрика
+public interface IAbstractFactory
+{
+    IProductA CreateProductA();
+    IProductB CreateProductB();
+}
+
+// Конкретные фабрики
+public class Factory1 : IAbstractFactory
+{
+    public IProductA CreateProductA() => new ProductA1();
+    public IProductB CreateProductB() => new ProductB1();
+}
+
+public class Factory2 : IAbstractFactory
+{
+    public IProductA CreateProductA() => new ProductA2();
+    public IProductB CreateProductB() => new ProductB2();
+}
+
+// Клиент
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Выбираем фабрику
+        IAbstractFactory factory = new Factory1();
+
+        // Создаём продукты
+        IProductA productA = factory.CreateProductA();
+        IProductB productB = factory.CreateProductB();
+
+        // Выводим информацию
+        Console.WriteLine(productA.GetName());
+        Console.WriteLine(productB.GetDescription());
+    }
+}
+
+
+2.Builder
+
+Название и классификация:
+-Строитель: паттерны , порождающий объекты
+
+Назначение:
+-Отделяет конструирования сложного объекта от его представления, так что в резуальтате одного и того же процесса конструирования могут получится разные представления
+
+Применимость:
+- Паттерн применяется в том случае , когда создание сложного объекта не должно зависеть от того из каких частей он создается и как они взаимодействуют между собой
+- Паттерн применяется когда нужно создать различные представления,создаваемого объекта
+
+Структура:
+![image](https://github.com/user-attachments/assets/81ec2fb7-bbb0-4ae1-b5b1-449ab16d33b1)
+
+Участники:
+-Builder : создает абстрактный интерфейс для создания частей объекта Product;
+-ConcreteBuilder :-создает части и собирает объект , реализуя интерфейс Builder;
+                  -определяет представление и следит за ним;
+                  -предоставляет интерфейс для доступа к продукту;
+
+-Director : Конструирует объект
+-Product: продук
+
+Отношения:
+-Клиент создает объект распорядитель Director и конфигурирует его нужным объектом;
+-Распорядитель уведомляет строителя, что нужно построить очередную часть продукта;
+-Строитель обрабатывет запрос от распорядителя и создает нужные части;
+-Клиент забирает продукт у строителя;
+![image](https://github.com/user-attachments/assets/f122d18b-9db4-4ce7-9d7f-15c82f48ed69)
+
+Результаты:
+-представляет изменять внутренее представление продукта
+-изолирует код
+-дает более тонкий контроль над созданием продукта ,так как строитель создает объект шаг за шагом , до тех пор пока не завершит строительство распорядитель
+
+ Пример кода:
+ // Класс, который мы будем создавать с помощью строителя
+public class Product
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
+}
+
+// Интерфейс строителя
+public interface IProductBuilder
+{
+    void SetName(string name);
+    void SetDescription(string description);
+    Product Build();
+}
+
+// Конкретный строитель
+public class ConcreteProductBuilder : IProductBuilder
+{
+    private Product _product = new Product();
+
+    public void SetName(string name)
+    {
+        _product.Name = name;
+    }
+
+    public void SetDescription(string description)
+    {
+        _product.Description = description;
+    }
+
+    public Product Build()
+    {
+        return _product;
+    }
+}
+
+// Директор (необязательно, но показывает пошаговое создание)
+public class Director
+{
+    public Product Construct(IProductBuilder builder)
+    {
+        builder.SetName("Example Product");
+        builder.SetDescription("This is a simple product.");
+        return builder.Build();
+    }
+}
+
+// Использование
+class Program
+{
+    static void Main(string[] args)
+    {
+        IProductBuilder builder = new ConcreteProductBuilder();
+        Director director = new Director();
+
+        Product product = director.Construct(builder);
+
+        Console.WriteLine($"Name: {product.Name}");
+        Console.WriteLine($"Description: {product.Description}");
+    }
+}
+
+
+
+                  
+          
+
+
+
+
+
+
 
 
