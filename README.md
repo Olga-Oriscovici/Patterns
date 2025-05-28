@@ -245,6 +245,122 @@ class Program
 }
 
 
+ 3. Фабричный метод
+
+Название и классификация:
+Фабричный метод (Factory Method) — порождающий паттерн (классы).
+
+**Назначение:
+Определяет интерфейс для создания объекта, но оставляет подклассам решение о том, какой класс инстанцировать. Таким образом, фабричный метод позволяет делегировать создание объектов дочерним классам.
+
+**Известен также как:**
+Virtual Constructor (виртуальный конструктор).
+
+**Применимость:**
+Используется, когда:
+
+* Классу заранее неизвестно, объекты каких классов он должен создавать.
+* Класс спроектирован так, чтобы позволять подклассам определять тип создаваемых объектов.
+* Класс делегирует обязанности одному из нескольких вспомогательных подклассов, и вы хотите локализовать знание о том, какой класс принимает эти обязанности.
+
+**Структура:**
+![image](https://github.com/user-attachments/assets/2b7edc30-0266-4dc5-9cdd-2bb3b208f1db)
+
+**Участники:**
+
+* **Product** — общий интерфейс или абстрактный класс для объектов, которые будут созданы.
+* **ConcreteProduct** — конкретная реализация интерфейса Product.
+* **Creator** — объявляет фабричный метод, который возвращает объекты типа Product. Может иметь реализацию по умолчанию.
+* **ConcreteCreator** — переопределяет фабричный метод, чтобы возвращать конкретные продукты.
+
+**Отношения:**
+
+* Creator полагается на подклассы в определении фабричного метода, который возвращает экземпляр нужного продукта.
+
+**Результаты применения:**
+✅ Избавляет класс от привязки к конкретным классам продуктов.
+✅ Делает код более гибким и расширяемым — добавление нового типа продукта требует создания нового подкласса Creator.
+✅ Упрощает поддержку и сопровождение — знание о создании объекта локализовано.
+⚠️ Может привести к созданию большого числа дополнительных классов (по одному Creator для каждого ConcreteProduct).
+
+---
+
+### Пример кода (C#)
+
+```csharp
+// Абстрактный продукт
+public interface IProduct
+{
+    void ShowInfo();
+}
+
+// Конкретный продукт A
+public class ConcreteProductA : IProduct
+{
+    public void ShowInfo()
+    {
+        Console.WriteLine("Это продукт A.");
+    }
+}
+
+// Конкретный продукт B
+public class ConcreteProductB : IProduct
+{
+    public void ShowInfo()
+    {
+        Console.WriteLine("Это продукт B.");
+    }
+}
+
+// Абстрактный создатель (Creator)
+public abstract class Creator
+{
+    // Фабричный метод
+    public abstract IProduct CreateProduct();
+
+    // Некоторая логика, которая использует продукт
+    public void SomeOperation()
+    {
+        IProduct product = CreateProduct();
+        product.ShowInfo();
+    }
+}
+
+// Конкретный создатель A
+public class ConcreteCreatorA : Creator
+{
+    public override IProduct CreateProduct()
+    {
+        return new ConcreteProductA();
+    }
+}
+
+// Конкретный создатель B
+public class ConcreteCreatorB : Creator
+{
+    public override IProduct CreateProduct()
+    {
+        return new ConcreteProductB();
+    }
+}
+
+// Клиентский код
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Можно легко изменить продукт, просто выбрав другой конкретный создатель
+        Creator creatorA = new ConcreteCreatorA();
+        creatorA.SomeOperation();
+
+        Creator creatorB = new ConcreteCreatorB();
+        creatorB.SomeOperation();
+    }
+}
+```
+
+
+
 
                   
           
